@@ -35,6 +35,8 @@ static void update_time(Layer *layer, GContext *ctx) {
   
   int16_t hour = (t->tm_hour) % 12;
   int16_t min = t->tm_min;
+  int8_t batcount = bat * .8;
+  
   
   int16_t hourX = 74;
   int16_t hourY = 22;
@@ -102,6 +104,22 @@ static void update_time(Layer *layer, GContext *ctx) {
     min -= 5;
   }
   
+  int16_t batX = 10;
+  
+  while (batcount >= 1) {
+    GRect batsquare = GRect(batX, 150, 12, 12);
+    
+    graphics_context_set_fill_color(ctx, GColorWhite);
+#ifdef PBL_COLOR
+    if (bat >= 4 && bat <= 6) {
+      graphics_context_set_fill_color(ctx, GColorBlack);
+    }
+#endif
+    graphics_fill_rect(ctx, batsquare, 0, GCornerNone);
+    batX += 16;
+    batcount -= 1;
+  }
+  
   strftime(s_day_buffer, sizeof(s_day_buffer), "%d", t);
   text_layer_set_text(s_day_label, s_day_buffer);
   
@@ -116,7 +134,7 @@ static void update_time(Layer *layer, GContext *ctx) {
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
-  layer_mark_dirty(s_time_layer);
+  layer_mark_dirty(s_box_layer);
   layer_mark_dirty(s_background_layer);
 }
 
@@ -126,7 +144,7 @@ static void main_window_load(Window *window) {
   s_day_font = fonts_load_resource_font(RESOURCE_ID_BLACKOUT_34);
   
   s_background_layer = layer_create(bounds);
-  s_time_layer = layer_create(bounds);
+  s_box_layer = layer_create(bounds);
   
   s_day_label = text_layer_create(GRect(59,64,40,40));
   
@@ -140,16 +158,16 @@ static void main_window_load(Window *window) {
   text_layer_set_font(s_day_label, s_day_font);
   
   layer_set_update_proc(s_background_layer, update_bg);
-  layer_set_update_proc(s_time_layer, update_time);
+  layer_set_update_proc(s_box_layer, update_time);
   
   layer_add_to_window(s_background_layer, window);
-  layer_add_to_window(s_time_layer, window);
+  layer_add_to_window(s_box_layer, window);
   
-  text_layer_add_to_layer(s_day_label, s_time_layer);
+  text_layer_add_to_layer(s_day_label, s_box_layer);
 }
 
 static void main_window_unload(Window *window) {
-  layer_destroy_safe(s_time_layer);
+  layer_destroy_safe(s_box_layer);
   layer_destroy_safe(s_background_layer);
   
   text_layer_destroy_safe(s_day_label);

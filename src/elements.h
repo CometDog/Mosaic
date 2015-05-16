@@ -1,5 +1,5 @@
 static Window *s_main_window;
-static Layer *s_background_layer, *s_time_layer;
+static Layer *s_background_layer, *s_box_layer;
 static TextLayer *s_day_label;
 
 static GFont s_day_font;
