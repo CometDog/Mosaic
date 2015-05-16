@@ -2,6 +2,31 @@
 #include "libs/pebble-assist.h"
 #include "elements.h"
 
+static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+  Tuple *t = dict_read_first(iterator);
+
+  while(t != NULL) {
+    switch(t->key) {
+    case TEMPERATURE:
+      temp = (int)t->value->int32;
+      break;
+    default:
+      ERROR("] %d not recognized!", (int)t->key);
+      break;
+    }
+    t = dict_read_next(iterator);
+  }
+}
+static void inbox_dropped_callback(AppMessageResult reason, void *context) {
+  ERROR("Message dropped!");
+}
+static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
+  ERROR("Outbox send failed");
+}
+static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
+  INFO("Outbox send success");
+}
+
 static void update_bg(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(layer);
   GPoint center = grect_center_point(&bounds);
@@ -37,9 +62,10 @@ static void update_time(Layer *layer, GContext *ctx) {
   int16_t min = t->tm_min;
   int8_t batcount = bat * .8;
   
-  
   int16_t hourX = 74;
   int16_t hourY = 22;
+  
+  int16_t tempcount = (temp + 36) * .57143;
   
   while (hour >= 1) {
     GRect bigsquare = GRect(hourX, hourY, 28, 28);
@@ -120,6 +146,37 @@ static void update_time(Layer *layer, GContext *ctx) {
     batcount -= 1;
   }
   
+  int16_t tempX = 10;
+  int16_t tempY = 14;
+  if (tempcount > 32) {
+    tempcount = 32;
+  }
+  if (tempcount < 0) {
+    tempcount = 0;
+  }
+  
+  while (tempcount >= 1) {
+    GRect tempsquare = GRect(tempX, tempY, 4, 4);
+    
+    graphics_context_set_fill_color(ctx, GColorWhite);
+#ifdef PBL_COLOR
+    if (bat >= 4 && bat <= 6) {
+      graphics_context_set_fill_color(ctx, GColorBlack);
+    }
+#endif
+    graphics_fill_rect(ctx, tempsquare, 0, GCornerNone);
+    
+    if (tempY == 14) {
+      tempY -= 8;
+    }
+    else {
+      tempY = 14;
+      tempX += 8;
+    }
+    
+    tempcount -= 1;
+  }
+  
   strftime(s_day_buffer, sizeof(s_day_buffer), "%d", t);
   text_layer_set_text(s_day_label, s_day_buffer);
   
@@ -179,6 +236,12 @@ static void init() {
   s_main_window = window_create();
   window_handlers(s_main_window, main_window_load, main_window_unload);
   window_stack_push(s_main_window, true);
+  
+  app_message_register_inbox_received(inbox_received_callback);
+  app_message_register_inbox_dropped(inbox_dropped_callback);
+  app_message_register_outbox_failed(outbox_failed_callback);
+  app_message_register_outbox_sent(outbox_sent_callback);
+  
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
 }
 

@@ -1,5 +1,7 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "TEMPERATURE": 0
+    },
     "capabilities": [
         ""
     ],
