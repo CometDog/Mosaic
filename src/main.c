@@ -65,7 +65,7 @@ static void update_time(Layer *layer, GContext *ctx) {
   int16_t hourX = 74;
   int16_t hourY = 22;
   
-  int16_t tempcount = (((temp + 32) * 1.8) + 10) * .32;
+  int16_t tempcount = (((temp * 1.8) + 42) * .32) + 10;
   
   while (hour >= 1) {
     GRect bigsquare = GRect(hourX, hourY, 28, 28);
