@@ -6,7 +6,7 @@
         ""
     ],
     "companyName": "James Downs",
-    "longName": "Squircle",
+    "longName": "Mosaic",
     "projectType": "native",
     "resources": {
         "media": [
@@ -18,7 +18,7 @@
         ]
     },
     "sdkVersion": "3",
-    "shortName": "Squircle",
+    "shortName": "Mosaic",
     "targetPlatforms": [
         "aplite",
         "basalt"
