@@ -20,6 +20,7 @@ function locationSuccess(pos) {
       var dictionary = {
         "TEMPERATURE": temperature
       };
+      console.log("Temperature is", temperature);
       
       MessageQueue.sendAppMessage(dictionary,
         function(e) {
