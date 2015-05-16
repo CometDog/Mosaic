@@ -7,7 +7,13 @@
     "longName": "Squircle",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "fonts/Blackout3L.otf",
+                "name": "BLACKOUT_34",
+                "type": "font"
+            }
+        ]
     },
     "sdkVersion": "3",
     "shortName": "Squircle",
@@ -16,6 +22,7 @@
         "basalt"
     ],
     "uuid": "06a8e9c1-369d-4792-a0e3-d63867199253",
+    "versionCode": "1",
     "versionLabel": "1.0",
     "watchapp": {
         "watchface": true
