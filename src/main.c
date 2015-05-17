@@ -31,9 +31,7 @@ static void update_bg(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(layer);
   GPoint center = grect_center_point(&bounds);
   
-#ifdef PBL_COLOR
   bat = battery_state_service_peek().charge_percent / 10;
-#endif
 
 #ifdef PBL_COLOR
   if (bat >= 7) {
